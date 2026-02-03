@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Amazing Sister - Interactive Slideshow</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial Rounded MT Bold', 'Arial', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #ffcfe0, #b5deff, #d9cfff);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            background-color: white;
+            border-radius: 30px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .header {
+            background: linear-gradient(to right, #ff6b8b, #ff8e53);
+            color: white;
+            text-align: center;
+            padding: 40px 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header h1 {
+            font-size: 3.8rem;
+            margin-bottom: 15px;
+            text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.3);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        .header p {
+            font-size: 1.6rem;
+            opacity: 0.95;
+            font-weight: 500;
+        }
+        
+        .slideshow-container {
+            position: relative;
+            height: 500px;
+            overflow: hidden;
+            background: linear-gradient(to bottom, #fff5f7, #f0f9ff);
+        }
+        
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            padding: 60px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .slide.active {
+            opacity: 1;
+        }
+        
+        .slide-icon {
+            font-size: 140px;
+            margin-bottom: 40px;
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: bounce 3s infinite;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            border: 8px solid white;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .slide-1 .slide-icon {
+            background: linear-gradient(145deg, #4d96ff, #6c5ce7);
+            color: white;
+        }
+        
+        .slide-2 .slide-icon {
+            background: linear-gradient(145deg, #ff6b8b, #ff8e53);
+            color: white;
+        }
+        
+        .slide-3 .slide-icon {
+            background: linear-gradient(145deg, #00b894, #00cec9);
+            color: white;
+        }
+        
+        .slide h2 {
+            font-size: 3.2rem;
+            margin-bottom: 25px;
+            color: #333;
+            background: linear-gradient(to right, #ff6b8b, #4d96ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .slide p {
+            font-size: 1.7rem;
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 40px;
+            max-width: 800px;
+        }
+        
+        .slide-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            padding: 25px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-top: 2px solid #eee;
+        }
+        
+        .control-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(to right, #4d96ff, #6c5ce7);
+            color: white;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            box-shadow: 0 8px 20px rgba(77, 150, 255, 0.3);
+        }
+        
+        .control-btn:hover {
+            transform: scale(1.15);
+            box-shadow: 0 12px 25px rgba(77, 150, 255, 0.5);
+        }
+        
+        .slide-indicators {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .indicator {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #ddd;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        
+        .indicator.active {
+            background: linear-gradient(to right, #ff6b8b, #ff8e53);
+            transform: scale(1.3);
+            border-color: white;
+            box-shadow: 0 0 10px rgba(255, 107, 139, 0.5);
+        }
+        
+        .interaction-section {
+            padding: 50px 40px;
+            background: linear-gradient(to bottom, #f8f5ff, #e6f2ff);
+            text-align: center;
+            border-top: 3px dashed #ccc;
+            position: relative;
+            min-height: 380px;
+        }
+        
+        .question {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 50px;
+            font-weight: 800;
+            background: linear-gradient(to right, #ff6b8b, #4d96ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .buttons-container {
+            position: relative;
+            width: 100%;
+            height: 180px;
+            margin-bottom: 30px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.7);
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn {
+            padding: 25px 80px;
+            font-size: 2rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 70px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
+        
+        .yes-btn {
+            background: linear-gradient(to right, #38a169, #48bb78);
+            color: white;
+            z-index: 30;
+        }
+        
+        .yes-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 20px 40px rgba(56, 161, 105, 0.4);
+        }
+        
+        .no-btn {
+            background: linear-gradient(to right, #e53e3e, #fc8181);
+            color: white;
+            z-index: 20;
+            transition: left 0.4s, top 0.4s, transform 0.3s;
+            border: 4px solid white;
+        }
+        
+        .no-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .attempts-counter {
+            font-size: 1.6rem;
+            color: #666;
+            background-color: white;
+            padding: 20px 40px;
+            border-radius: 50px;
+            display: inline-block;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            font-weight: 600;
+            border: 3px solid #ff6b8b;
+        }
+        
+        .attempts-counter span {
+            font-weight: bold;
+            color: #e53e3e;
+            font-size: 2.2rem;
+            margin-left: 10px;
+        }
+        
+        .result-message {
+            font-size: 3.2rem;
+            color: #38a169;
+            margin-top: 50px;
+            padding: 40px;
+            background: linear-gradient(135deg, #f0fff4, #c6f6d5);
+            border-radius: 25px;
+            display: none;
+            animation: slideIn 0.8s ease;
+            font-weight: bold;
+            box-shadow: 0 20px 45px rgba(56, 161, 105, 0.3);
+            width: 100%;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            border: 5px solid white;
+        }
+        
+        @keyframes slideIn {
+            0% { opacity: 0; transform: translateY(50px) scale(0.9); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        
+        .no-btn-message {
+            position: absolute;
+            font-size: 1.4rem;
+            color: #e53e3e;
+            font-weight: bold;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            box-shadow: 0 8px 20px rgba(229, 62, 62, 0.3);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 100;
+            border: 2px solid #e53e3e;
+            transition: opacity 0.3s;
+            white-space: nowrap;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            opacity: 0;
+            z-index: 1000;
+            pointer-events: none;
+        }
+        
+        .footer {
+            background: linear-gradient(to right, #2d3748, #4a5568);
+            color: white;
+            text-align: center;
+            padding: 35px;
+            font-size: 1.4rem;
+            font-weight: 500;
+        }
+        
+        .escape-path {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        @media (max-width: 992px) {
+            .slideshow-container {
+                height: 450px;
+            }
+            
+            .slide {
+                padding: 40px 30px;
+            }
+            
+            .slide-icon {
+                font-size: 120px;
+                width: 190px;
+                height: 190px;
+            }
+            
+            .slide h2 {
+                font-size: 2.8rem;
+            }
+            
+            .slide p {
+                font-size: 1.5rem;
+            }
+            
+            .question {
+                font-size: 2.2rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 3rem;
+            }
+            
+            .slideshow-container {
+                height: 420px;
+            }
+            
+            .slide {
+                padding: 30px 25px;
+            }
+            
+            .slide-icon {
+                font-size: 100px;
+                width: 170px;
+                height: 170px;
+                margin-bottom: 30px;
+            }
+            
+            .slide h2 {
+                font-size: 2.4rem;
+            }
+            
+            .slide p {
+                font-size: 1.4rem;
+            }
+            
+            .question {
+                font-size: 2rem;
+                margin-bottom: 40px;
+            }
+            
+            .btn {
+                padding: 20px 60px;
+                font-size: 1.8rem;
+            }
+            
+            .result-message {
+                font-size: 2.5rem;
+                padding: 35px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .header p {
+                font-size: 1.4rem;
+            }
+            
+            .slideshow-container {
+                height: 400px;
+            }
+            
+            .slide h2 {
+                font-size: 2rem;
+            }
+            
+            .slide p {
+                font-size: 1.3rem;
+            }
+            
+            .control-btn {
+                width: 60px;
+                height: 60px;
+                font-size: 24px;
+            }
+            
+            .question {
+                font-size: 1.8rem;
+                margin-bottom: 35px;
+            }
+            
+            .btn {
+                padding: 18px 50px;
+                font-size: 1.6rem;
+            }
+            
+            .result-message {
+                font-size: 2rem;
+                padding: 30px;
+            }
+            
+            .buttons-container {
+                height: 220px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Your Amazing Sister</h1>
+            <p>Celebrating her incredible qualities</p>
+        </div>
+        
+        <div class="slideshow-container">
+            <!-- Slide 1: Smart -->
+            <div class="slide slide-1 active">
+                <div class="slide-icon">🧠</div>
+                <h2>Extremely Smart</h2>
+                <p>Your sister possesses an incredible intellect that shines in everything she does. She solves problems with ease, learns quickly, and always offers wise advice.</p>
+            </div>
+            
+            <!-- Slide 2: Brilliant -->
+            <div class="slide slide-2">
+                <div class="slide-icon">✨</div>
+                <h2>Truly Brilliant</h2>
+                <p>Her brilliance lights up every room. She has innovative ideas, creative solutions, and a unique perspective that makes everything around her more wonderful.</p>
+            </div>
+            
+            <!-- Slide 3: Beautiful -->
+            <div class="slide slide-3">
+                <div class="slide-icon">💖</div>
+                <h2>Absolutely Beautiful</h2>
+                <p>Her beauty comes from within and radiates outward. She has a kind heart, a warm smile, and a spirit that touches everyone she meets in the best way possible.</p>
+            </div>
+        </div>
+        
+        <div class="slide-controls">
+            <button class="control-btn prev-btn">❮</button>
+            
+            <div class="slide-indicators">
+                <div class="indicator active" data-slide="0"></div>
+                <div class="indicator" data-slide="1"></div>
+                <div class="indicator" data-slide="2"></div>
+            </div>
+            
+            <button class="control-btn next-btn">❯</button>
+        </div>
+        
+        <div class="interaction-section">
+            <div class="question">Do you agree that YOUR sister is amazing?</div>
+            
+            <div class="buttons-container" id="buttonsContainer">
+                <button class="btn yes-btn" id="yesBtn">YES, SHE IS! 💖</button>
+                <button class="btn no-btn" id="noBtn">NO</button>
+            </div>
+            
+            <div class="attempts-counter">Times you tried to click NO: <span id="attemptCount">0</span></div>
+            
+            <div class="result-message" id="resultMessage">
+                I know I'm smart, brilliant and beautiful! 😊✨
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Created with love for your amazing sister</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Slideshow functionality
+            const slides = document.querySelectorAll('.slide');
+            const indicators = document.querySelectorAll('.indicator');
+            const prevBtn = document.querySelector('.prev-btn');
+            const nextBtn = document.querySelector('.next-btn');
+            let currentSlide = 0;
+            let slideInterval;
+            
+            // Function to show a specific slide
+            function showSlide(index) {
+                // Hide all slides
+                slides.forEach(slide => {
+                    slide.classList.remove('active');
+                });
+                
+                // Remove active class from all indicators
+                indicators.forEach(indicator => {
+                    indicator.classList.remove('active');
+                });
+                
+                // Show the selected slide
+                slides[index].classList.add('active');
+                indicators[index].classList.add('active');
+                currentSlide = index;
+            }
+            
+            // Next slide function
+            function nextSlide() {
+                let nextIndex = currentSlide + 1;
+                if (nextIndex >= slides.length) nextIndex = 0;
+                showSlide(nextIndex);
+            }
+            
+            // Previous slide function
+            function prevSlide() {
+                let prevIndex = currentSlide - 1;
+                if (prevIndex < 0) prevIndex = slides.length - 1;
+                showSlide(prevIndex);
+            }
+            
+            // Event listeners for slide navigation
+            prevBtn.addEventListener('click', prevSlide);
+            nextBtn.addEventListener('click', nextSlide);
+            
+            // Event listeners for indicators
+            indicators.forEach((indicator, index) => {
+                indicator.addEventListener('click', () => {
+                    showSlide(index);
+                });
+            });
+            
+            // Auto advance slides every 5 seconds
+            function startSlideInterval() {
+                slideInterval = setInterval(nextSlide, 5000);
+            }
+            
+            startSlideInterval();
+            
+            // Pause auto-advance when user interacts with slideshow
+            const slidesContainer = document.querySelector('.slideshow-container');
+            slidesContainer.addEventListener('mouseenter', () => {
+                clearInterval(slideInterval);
+            });
+            
+            slidesContainer.addEventListener('mouseleave', () => {
+                startSlideInterval();
+            });
+            
+            // Keyboard navigation for slides
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowRight') {
+                    nextSlide();
+                } else if (e.key === 'ArrowLeft') {
+                    prevSlide();
+                }
+            });
+            
+            // Yes/No button functionality
+            const yesBtn = document.getElementById('yesBtn');
+            const noBtn = document.getElementById('noBtn');
+            const resultMessage = document.getElementById('resultMessage');
+            const buttonsContainer = document.getElementById('buttonsContainer');
+            const attemptCount = document.getElementById('attemptCount');
+            
+            let attempts = 0;
+            let isNoBtnMoving = false;
+            let escapeMessages = [];
+            
+            // Function to show escape message
+            function showEscapeMessage(x, y, text) {
+                const message = document.createElement('div');
+                message.classList.add('no-btn-message');
+                message.textContent = text;
+                message.style.left = `${x}px`;
+                message.style.top = `${y}px`;
+                
+                document.querySelector('.interaction-section').appendChild(message);
+                escapeMessages.push(message);
+                
+                // Show the message
+                setTimeout(() => {
+                    message.style.opacity = '1';
+                }, 10);
+                
+                // Hide and remove the message after animation
+                setTimeout(() => {
+                    message.style.opacity = '0';
+                    setTimeout(() => {
+                        if (message.parentNode) {
+                            message.parentNode.removeChild(message);
+                            const index = escapeMessages.indexOf(message);
+                            if (index > -1) {
+                                escapeMessages.splice(index, 1);
+                            }
+                        }
+                    }, 300);
+                }, 1200);
+            }
+            
+            // Function to move NO button to a new position
+            function moveNoButton(triggerX, triggerY) {
+                if (isNoBtnMoving) return;
+                
+                isNoBtnMoving = true;
+                attempts++;
+                attemptCount.textContent = attempts;
+                
+                // Calculate container boundaries
+                const containerRect = buttonsContainer.getBoundingClientRect();
+                const buttonRect = noBtn.getBoundingClientRect();
+                
+                // Calculate max positions to keep button within container
+                const maxX = containerRect.width - buttonRect.width - 10;
+                const maxY = containerRect.height - buttonRect.height - 10;
+                
+                // Generate random position (away from trigger point)
+                let randomX, randomY;
+                let attemptsToFindPosition = 0;
+                
+                do {
+                    randomX = Math.floor(Math.random() * maxX);
+                    randomY = Math.floor(Math.random() * maxY);
+                    attemptsToFindPosition++;
+                    
+                    // Calculate distance from trigger point
+                    const distance = Math.sqrt(
+                        Math.pow(randomX - (triggerX - containerRect.left), 2) + 
+                        Math.pow(randomY - (triggerY - containerRect.top), 2)
+                    );
+                    
+                    // Make sure it's far enough away (at least 100px)
+                    if (distance > 100 || attemptsToFindPosition > 20) {
+                        break;
+                    }
+                } while (true);
+                
+                // Move the button with animation
+                noBtn.style.left = `${randomX}px`;
+                noBtn.style.top = `${randomY}px`;
+                
+                // Show escape message at trigger point
+                const escapeMessagesText = [
+                    "Too slow!",
+                    "Can't catch me!",
+                    "Missed me!",
+                    "Nice try!",
+                    "Almost had me!",
+                    "I'm too quick!",
+                    "Try again!",
+                    "Not today!",
+                    "You'll never get me!",
+                    "Too fast for you!"
+                ];
+                
+                const randomMessage = escapeMessagesText[Math.floor(Math.random() * escapeMessagesText.length)];
+                showEscapeMessage(triggerX, triggerY, randomMessage);
+                
+                // Change button text and style based on attempts
+                const buttonMessages = [
+                    "NO",
+                    "Are you sure?",
+                    "Really?",
+                    "Think again!",
+                    "Try clicking YES!",
+                    "You must be joking!",
+                    "Click YES instead!",
+                    "Give up and click YES!",
+                    "Why would you say no?",
+                    "Seriously?",
+                    "Not cool!",
+                    "Please click YES!",
+                    "You know she's amazing!",
+                    "Try again!",
+                    "Click YES, please!"
+                ];
+                
+                const randomButtonMessage = buttonMessages[Math.floor(Math.random() * buttonMessages.length)];
+                noBtn.textContent = randomButtonMessage;
+                
+                // Change button color
+                const colors = [
+                    "linear-gradient(to right, #e53e3e, #fc8181)",
+                    "linear-gradient(to right, #d69e2e, #faf089)",
+                    "linear-gradient(to right, #805ad5, #d6bcfa)",
+                    "linear-gradient(to right, #319795, #81e6d9)",
+                    "linear-gradient(to right, #dd6b20, #fbd38d)",
+                    "linear-gradient(to right, #e53e3e, #ff8e53)",
+                    "linear-gradient(to right, #4d96ff, #6c5ce7)"
+                ];
+                
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                noBtn.style.background = randomColor;
+                
+                // Make the button smaller after many attempts
+                if (attempts >= 5) {
+                    const scale = Math.max(0.5, 1 - attempts * 0.1);
+                    noBtn.style.transform = `scale(${scale})`;
+                }
+                
+                // Make button move faster after 10 attempts
+                if (attempts >= 10) {
+                    noBtn.style.transition = 'left 0.3s, top 0.3s, transform 0.3s';
+                }
+                
+                // If attempts reach 20, hide the no button
+                if (attempts >= 20) {
+                    setTimeout(() => {
+                        noBtn.style.display = 'none';
+                        resultMessage.textContent = "Okay, I see you're persistent, but you know YOUR sister is amazing! 😉💖";
+                        resultMessage.style.display = 'block';
+                        createConfetti();
+                    }, 500);
+                }
+                
+                // Reset moving flag after animation
+                setTimeout(() => {
+                    isNoBtnMoving = false;
+                }, 400);
+            }
+            
+            // Function to create confetti
+            function createConfetti() {
+                const colors = ['#ff6b8b', '#4d96ff', '#6c5ce7', '#00b894', '#ffd166', '#ff8e53', '#a78bfa'];
+                const confettiCount = 120;
+                
+                for (let i = 0; i < confettiCount; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.classList.add('confetti');
+                    
+                    // Random properties
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    const size = Math.random() * 20 + 5;
+                    const left = Math.random() * 100;
+                    const animationDuration = Math.random() * 3 + 2;
+                    const animationDelay = Math.random() * 0.5;
+                    
+                    confetti.style.backgroundColor = color;
+                    confetti.style.width = `${size}px`;
+                    confetti.style.height = `${size}px`;
+                    confetti.style.left = `${left}vw`;
+                    confetti.style.top = '-30px';
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    
+                    // Add confetti to the page
+                    document.body.appendChild(confetti);
+                    
+                    // Create animation
+                    const animation = confetti.animate([
+                        { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                        { transform: `translateY(${window.innerHeight}px) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+                    ], {
+                        duration: animationDuration * 1000,
+                        delay: animationDelay * 1000,
+                        easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)'
+                    });
+                    
+                    // Remove confetti after animation
+                    animation.onfinish = () => {
+                        if (confetti.parentNode) {
+                            confetti.parentNode.removeChild(confetti);
+                        }
+                    };
+                }
+            }
+            
+            // Event listeners for NO button - Move on mouse approach
+            document.addEventListener('mousemove', function(e) {
+                if (noBtn.style.display === 'none') return;
+                
+                const noBtnRect = noBtn.getBoundingClientRect();
+                const containerRect = buttonsContainer.getBoundingClientRect();
+                
+                // Calculate distance from mouse to button center
+                const buttonCenterX = noBtnRect.left + noBtnRect.width / 2;
+                const buttonCenterY = noBtnRect.top + noBtnRect.height / 2;
+                const distance = Math.sqrt(
+                    Math.pow(e.clientX - buttonCenterX, 2) + 
+                    Math.pow(e.clientY - buttonCenterY, 2)
+                );
+                
+                // If mouse is within 80px of button, move it
+                if (distance < 80 && !isNoBtnMoving) {
+                    moveNoButton(e.clientX, e.clientY);
+                }
+            });
+            
+            // Also move on click (in case they somehow click it)
+            noBtn.addEventListener('click', function(e) {
+                moveNoButton(e.clientX, e.clientY);
+                e.preventDefault();
+                e.stopPropagation();
+            });
+            
+            // YES button functionality
+            yesBtn.addEventListener('click', function() {
+                resultMessage.style.display = 'block';
+                createConfetti();
+                
+                // Hide buttons
+                yesBtn.style.display = 'none';
+                noBtn.style.display = 'none';
+                
+                // Change message after a delay
+                setTimeout(() => {
+                    resultMessage.textContent = "Thank you for agreeing! YOUR sister truly is smart, brilliant and beautiful! 💖✨";
+                    resultMessage.style.background = "linear-gradient(135deg, #f0fff4, #ffd6e0)";
+                }, 1500);
+                
+                // Create more confetti periodically
+                const confettiInterval = setInterval(() => {
+                    createConfetti();
+                }, 800);
+                
+                // Stop confetti after 8 seconds
+                setTimeout(() => {
+                    clearInterval(confettiInterval);
+                }, 8000);
+            });
+            
+            // Initialize button positions
+            const containerWidth = buttonsContainer.offsetWidth;
+            const containerHeight = buttonsContainer.offsetHeight;
+            
+            // Position YES button in the center
+            yesBtn.style.left = `${(containerWidth - yesBtn.offsetWidth) / 2}px`;
+            yesBtn.style.top = `${(containerHeight - yesBtn.offsetHeight) / 2}px`;
+            
+            // Position NO button randomly initially (but visible!)
+            const initialX = Math.floor(Math.random() * (containerWidth - noBtn.offsetWidth - 20)) + 10;
+            const initialY = Math.floor(Math.random() * (containerHeight - noBtn.offsetHeight - 20)) + 10;
+            noBtn.style.left = `${initialX}px`;
+            noBtn.style.top = `${initialY}px`;
+            
+            // Make sure NO button is always visible
+            noBtn.style.display = 'block';
+            noBtn.style.opacity = '1';
+            noBtn.style.visibility = 'visible';
+            
+            // Add touch support for mobile devices
+            document.addEventListener('touchmove', function(e) {
+                if (noBtn.style.display === 'none') return;
+                
+                const touch = e.touches[0];
+                const noBtnRect = noBtn.getBoundingClientRect();
+                
+                // Calculate distance from touch to button center
+                const buttonCenterX = noBtnRect.left + noBtnRect.width / 2;
+                const buttonCenterY = noBtnRect.top + noBtnRect.height / 2;
+                const distance = Math.sqrt(
+                    Math.pow(touch.clientX - buttonCenterX, 2) + 
+                    Math.pow(touch.clientY - buttonCenterY, 2)
+                );
+                
+                // If touch is within 100px of button, move it
+                if (distance < 100 && !isNoBtnMoving) {
+                    moveNoButton(touch.clientX, touch.clientY);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
